@@ -10,6 +10,8 @@
 |---|---|---|
 | [markitdown-skill](markitdown-skill/) | 文档转 Markdown：PDF / Word / PPT / 图片 OCR / 音频转写 / 网页 / YouTube，支持批量转换 | `pip install 'markitdown[all]'` |
 | [workbuddy-asset-migration](workbuddy-asset-migration/) | WorkBuddy 资产迁移：在 CN/海外版、跨机器之间迁移 skills、对话、配置、connectors、身份文件，合并不覆盖 | 纯 Python 标准库，零依赖 |
+| [liepin-search](liepin-search/) | 猎聘超级搜索：输入 JD/关键词 → 自动搜索、深度审查、JD 评分候选人，输出带直达链接的推荐名单 | Python 3 + 已登录猎聘的 Chrome（CDP） |
+| [desktop-organizer](desktop-organizer/) | 桌面文件整理：候选人简历按职位关键词自动分类归档、JD 脱敏转 PDF、图片/其他文件按规则处理，全程不删除文件 | Python 3 + python-docx + reportlab |
 
 ## 🚀 安装
 
@@ -19,6 +21,8 @@
 git clone https://github.com/Glen-Wei/workbuddy-skills.git ~/wb-skills
 cp -R ~/wb-skills/markitdown-skill ~/.workbuddy/skills/
 cp -R ~/wb-skills/workbuddy-asset-migration ~/.workbuddy/skills/
+cp -R ~/wb-skills/liepin-search ~/.workbuddy/skills/
+cp -R ~/wb-skills/desktop-organizer ~/.workbuddy/skills/
 ```
 
 其他 AI 助手：把对应 skill 目录放入你的 skills 目录（如 `~/.claude/skills/`、`~/.codebuddy/skills/`），或直接阅读各 skill 的 `SKILL.md` 按文档使用。
