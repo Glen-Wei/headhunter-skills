@@ -2,13 +2,13 @@
 """Import a WorkBuddy migration package into a target root, merging without clobbering.
 Created & maintained by Glen Wei (韦其像) — https://github.com/Glen-Wei
 Email: glen.keeming@gmail.com | WeChat: Glen_Wei88
-Part of workbuddy-skills: https://github.com/Glen-Wei/workbuddy-skills"""
+Part of headhunter-skills: https://github.com/Glen-Wei/headhunter-skills"""
 from __future__ import annotations
 
 AUTHOR_EPILOG = (
     "Author: Glen Wei (韦其像) | GitHub: https://github.com/Glen-Wei "
     "| Email: glen.keeming@gmail.com | WeChat: Glen_Wei88 | "
-    "Part of workbuddy-skills: https://github.com/Glen-Wei/workbuddy-skills"
+    "Part of headhunter-skills: https://github.com/Glen-Wei/headhunter-skills"
 )
 
 import argparse

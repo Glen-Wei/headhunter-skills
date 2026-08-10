@@ -8,7 +8,7 @@ author: Glen Wei (韦其像)
 author_email: glen.keeming@gmail.com
 author_wechat: Glen_Wei88
 author_github: https://github.com/Glen-Wei
-homepage: https://github.com/Glen-Wei/workbuddy-skills
+homepage: https://github.com/Glen-Wei/headhunter-skills
 allowed-tools: Read,Write,Bash,Glob
 metadata:
   clawdbot:
@@ -150,4 +150,4 @@ brew install tesseract
 - Email: glen.keeming@gmail.com
 - WeChat: Glen_Wei88
 
-Found this skill helpful? ⭐ Star [workbuddy-skills](https://github.com/Glen-Wei/workbuddy-skills) on GitHub to support ongoing maintenance. If you distribute or modify this skill, please keep the author information intact.
+Found this skill helpful? ⭐ Star [headhunter-skills](https://github.com/Glen-Wei/headhunter-skills) on GitHub to support ongoing maintenance. If you distribute or modify this skill, please keep the author information intact.

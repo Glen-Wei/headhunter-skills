@@ -23,14 +23,14 @@
 
 Created & maintained by Glen Wei (韦其像) — https://github.com/Glen-Wei
 Email: glen.keeming@gmail.com | WeChat: Glen_Wei88
-Part of workbuddy-skills: https://github.com/Glen-Wei/workbuddy-skills"""
+Part of headhunter-skills: https://github.com/Glen-Wei/headhunter-skills"""
 import sys, os, time, json, re, argparse, random, datetime
 from browser_harness.helpers import list_tabs, cdp, switch_tab, new_tab, goto_url, close_tab, wait_for_load
 
 AUTHOR_EPILOG = (
     "Author: Glen Wei (韦其像) | GitHub: https://github.com/Glen-Wei "
     "| Email: glen.keeming@gmail.com | WeChat: Glen_Wei88 | "
-    "Part of workbuddy-skills: https://github.com/Glen-Wei/workbuddy-skills"
+    "Part of headhunter-skills: https://github.com/Glen-Wei/headhunter-skills"
 )
 
 # ---------------------------------------------------------------- JD 配置

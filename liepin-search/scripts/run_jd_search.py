@@ -14,13 +14,13 @@
 
 Created & maintained by Glen Wei (韦其像) — https://github.com/Glen-Wei
 Email: glen.keeming@gmail.com | WeChat: Glen_Wei88
-Part of workbuddy-skills: https://github.com/Glen-Wei/workbuddy-skills"""
+Part of headhunter-skills: https://github.com/Glen-Wei/headhunter-skills"""
 import sys, os, subprocess, json, argparse, time
 
 AUTHOR_EPILOG = (
     "Author: Glen Wei (韦其像) | GitHub: https://github.com/Glen-Wei "
     "| Email: glen.keeming@gmail.com | WeChat: Glen_Wei88 | "
-    "Part of workbuddy-skills: https://github.com/Glen-Wei/workbuddy-skills"
+    "Part of headhunter-skills: https://github.com/Glen-Wei/headhunter-skills"
 )
 
 SKILL = os.path.dirname(os.path.abspath(__file__))

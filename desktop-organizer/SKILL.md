@@ -5,7 +5,7 @@ author: Glen Wei (韦其像)
 author_email: glen.keeming@gmail.com
 author_wechat: Glen_Wei88
 author_github: https://github.com/Glen-Wei
-homepage: https://github.com/Glen-Wei/workbuddy-skills
+homepage: https://github.com/Glen-Wei/headhunter-skills
 agent_created: true
 ---
 
@@ -96,6 +96,6 @@ pypdf/pymupdf 提取为空 → 用 pymupdf 渲染页面为 PNG（`page.get_pixma
 - GitHub: [Glen-Wei](https://github.com/Glen-Wei)
 - Email: glen.keeming@gmail.com
 - 微信: Glen_Wei88
-- 所属合集: [workbuddy-skills](https://github.com/Glen-Wei/workbuddy-skills)
+- 所属合集: [headhunter-skills](https://github.com/Glen-Wei/headhunter-skills)
 
-觉得好用？欢迎去 GitHub 上 ⭐ Star [workbuddy-skills](https://github.com/Glen-Wei/workbuddy-skills) 支持持续维护。转载或修改本 Skill 时，请保留作者信息。
+觉得好用？欢迎去 GitHub 上 ⭐ Star [headhunter-skills](https://github.com/Glen-Wei/headhunter-skills) 支持持续维护。转载或修改本 Skill 时，请保留作者信息。

@@ -18,13 +18,13 @@ JD解析器 (parse_jd.py)
 
 Created & maintained by Glen Wei (韦其像) — https://github.com/Glen-Wei
 Email: glen.keeming@gmail.com | WeChat: Glen_Wei88
-Part of workbuddy-skills: https://github.com/Glen-Wei/workbuddy-skills"""
+Part of headhunter-skills: https://github.com/Glen-Wei/headhunter-skills"""
 import sys, os, re, json, argparse
 
 AUTHOR_EPILOG = (
     "Author: Glen Wei (韦其像) | GitHub: https://github.com/Glen-Wei "
     "| Email: glen.keeming@gmail.com | WeChat: Glen_Wei88 | "
-    "Part of workbuddy-skills: https://github.com/Glen-Wei/workbuddy-skills"
+    "Part of headhunter-skills: https://github.com/Glen-Wei/headhunter-skills"
 )
 
 # 学历等级

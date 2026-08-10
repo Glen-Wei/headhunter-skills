@@ -1,20 +1,21 @@
 <div align="center">
 
-# ⚡ WorkBuddy Skills
+# ⚡ 猎头 Skill（Headhunter Skills）
 
-### 即插即用的 AI 助手技能库 · AI Assistant Skill Arsenal
+### AI 猎头工作流技能库 · Skill Arsenal for Headhunters
 
 **由 [Glen Wei（韦其像）](https://github.com/Glen-Wei) 创建并维护** — 资深 AI 与具身智能领域猎头（TTC）
 
-[![Stars](https://img.shields.io/github/stars/Glen-Wei/workbuddy-skills?style=for-the-badge&logo=github&color=22d3ee&label=Stars)](https://github.com/Glen-Wei/workbuddy-skills)
-[![Forks](https://img.shields.io/github/forks/Glen-Wei/workbuddy-skills?style=for-the-badge&logo=github&color=a78bfa&label=Forks)](https://github.com/Glen-Wei/workbuddy-skills)
-[![License](https://img.shields.io/github/license/Glen-Wei/workbuddy-skills?style=for-the-badge&color=34d399&label=License)](LICENSE)
+[![Stars](https://img.shields.io/github/stars/Glen-Wei/headhunter-skills?style=for-the-badge&logo=github&color=22d3ee&label=Stars)](https://github.com/Glen-Wei/headhunter-skills)
+[![Forks](https://img.shields.io/github/forks/Glen-Wei/headhunter-skills?style=for-the-badge&logo=github&color=a78bfa&label=Forks)](https://github.com/Glen-Wei/headhunter-skills)
+[![License](https://img.shields.io/github/license/Glen-Wei/headhunter-skills?style=for-the-badge&color=34d399&label=License)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.8%2B-38bdf8?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![Platform](https://img.shields.io/badge/Platform-WorkBuddy%20%7C%20Claude%20%7C%20通用-0ea5e9?style=for-the-badge)](https://www.workbuddy.cn)
 
-**🌐 展示页: [glen-wei.github.io/workbuddy-skills](https://glen-wei.github.io/workbuddy-skills)**
+**🌐 展示页: [glen-wei.github.io/headhunter-skills](https://glen-wei.github.io/headhunter-skills)**
 
-> 一套**即插即用**的 AI 助手技能包。每个 Skill 都是**纯通用操作逻辑**——复制到你的 skills 目录即生效，**不含任何个人数据**。
+> 猎头工作流专用 AI 技能包：文档转 Markdown、资产迁移、猎聘超级搜索、桌面文件整理。
+> 每个 Skill 都是**纯通用操作逻辑**——复制到你的 skills 目录即生效，**不含任何个人数据**。
 
 </div>
 
@@ -33,7 +34,7 @@
 
 ```bash
 # 克隆
-git clone https://github.com/Glen-Wei/workbuddy-skills.git ~/wb-skills
+git clone https://github.com/Glen-Wei/headhunter-skills.git ~/wb-skills
 
 # WorkBuddy 用户：全部装入
 cp -R ~/wb-skills/* ~/.workbuddy/skills/
@@ -92,7 +93,7 @@ python scripts/classify_resumes.py ~/Downloads --out report.json
 
 ## ⭐ 支持
 
-觉得有用？点个 **Star** ⭐ 让更多需要的人看到。也欢迎提 [Issue](https://github.com/Glen-Wei/workbuddy-skills/issues) / PR 一起完善。
+觉得有用？点个 **Star** ⭐ 让更多需要的人看到。也欢迎提 [Issue](https://github.com/Glen-Wei/headhunter-skills/issues) / PR 一起完善。
 
 ## 📄 License
 

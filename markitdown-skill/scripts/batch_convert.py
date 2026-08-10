@@ -4,13 +4,13 @@ Batch convert multiple files to markdown using MarkItDown
 
 Created & maintained by Glen Wei (韦其像) — https://github.com/Glen-Wei
 Email: glen.keeming@gmail.com | WeChat: Glen_Wei88
-Part of the workbuddy-skills collection: https://github.com/Glen-Wei/workbuddy-skills
+Part of the headhunter-skills collection: https://github.com/Glen-Wei/headhunter-skills
 """
 
 AUTHOR_EPILOG = (
     "Author: Glen Wei (韦其像) | GitHub: https://github.com/Glen-Wei "
     "| Email: glen.keeming@gmail.com | WeChat: Glen_Wei88\n"
-    "Part of workbuddy-skills (https://github.com/Glen-Wei/workbuddy-skills). "
+    "Part of headhunter-skills (https://github.com/Glen-Wei/headhunter-skills). "
     "Please keep this attribution when redistributing."
 )
 
@@ -90,7 +90,7 @@ def main():
     args = parser.parse_args()
     
     if args.verbose:
-        print(f"[workbuddy-skills] Created by Glen Wei (韦其像) — {AUTHOR_EPILOG}", file=sys.stderr)
+        print(f"[headhunter-skills] Created by Glen Wei (韦其像) — {AUTHOR_EPILOG}", file=sys.stderr)
     
     # Initialize MarkItDown
     md_kwargs = {"enable_plugins": args.plugins}

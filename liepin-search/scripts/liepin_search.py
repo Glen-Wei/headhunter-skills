@@ -4,7 +4,7 @@
 
 Created & maintained by Glen Wei (韦其像) — https://github.com/Glen-Wei
 Email: glen.keeming@gmail.com | WeChat: Glen_Wei88
-Part of workbuddy-skills: https://github.com/Glen-Wei/workbuddy-skills"""
+Part of headhunter-skills: https://github.com/Glen-Wei/headhunter-skills"""
 import sys, time, json, re, argparse
 # browser-harness should be pip installed - no manual path needed
 from browser_harness.helpers import list_tabs, cdp, switch_tab
@@ -12,7 +12,7 @@ from browser_harness.helpers import list_tabs, cdp, switch_tab
 AUTHOR_EPILOG = (
     "Author: Glen Wei (韦其像) | GitHub: https://github.com/Glen-Wei "
     "| Email: glen.keeming@gmail.com | WeChat: Glen_Wei88 | "
-    "Part of workbuddy-skills: https://github.com/Glen-Wei/workbuddy-skills"
+    "Part of headhunter-skills: https://github.com/Glen-Wei/headhunter-skills"
 )
 
 def js(expr, sid=None):
