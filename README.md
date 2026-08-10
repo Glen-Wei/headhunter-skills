@@ -29,6 +29,8 @@
 | 📦 [workbuddy-asset-migration](workbuddy-asset-migration/) | WorkBuddy 资产迁移：CN↔海外版 / 跨机器迁移 skills、对话、配置、身份文件 | 纯标准库**零依赖**，合并不覆盖 |
 | 🎯 [liepin-search](liepin-search/) | 猎聘超级搜索：输入 JD → 自动搜索 + 深度审查 + 评分候选人 | 输出带直达链接的推荐名单，防误杀 |
 | 🗂️ [desktop-organizer](desktop-organizer/) | 桌面文件整理：简历按职位自动分类、JD 脱敏转 PDF | 全程**不删除文件**，安全归档 |
+| ✉️ [send-headhunting-email](send-headhunting-email/) | 建联邮件全流程：搜候选人 → 找邮箱 → 定制 JD → 发送；回复自动背调（ORCID/dblp/Scholar） | 身份信息全部可配置，纯逻辑可复用 |
+| 🤖 [robot-paper-campaign](robot-paper-campaign/) | 顶会论文推送 + 自动建联：arXiv 搜顶会论文 → 找华人作者邮箱 → 发邮件 → 日报 | **顶会/分类启动时用户自定义**，不再写死 |
 
 ## 🚀 快速开始
 
@@ -41,6 +43,10 @@ cp -R ~/wb-skills/* ~/.workbuddy/skills/
 
 # 或按需挑选，例如只要文档转换
 cp -R ~/wb-skills/markitdown-skill ~/.workbuddy/skills/
+
+# 邮件类（使用前先配置 ~/.workbuddy/gmail_config.json，见对应 SKILL.md）
+cp -R ~/wb-skills/send-headhunting-email ~/.workbuddy/skills/
+cp -R ~/wb-skills/robot-paper-campaign ~/.workbuddy/skills/
 ```
 
 其他 AI 助手：把对应 skill 目录放入你的 skills 目录（如 `~/.claude/skills/`），或直接阅读各 skill 的 `SKILL.md` 按文档使用。

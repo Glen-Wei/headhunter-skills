@@ -253,7 +253,7 @@
       <a class="btn btn-ghost" href="#skills">🧰 浏览技能</a>
     </div>
     <div class="meta">
-      <span><b>4</b> Skills</span>
+      <span><b>6</b> Skills</span>
       <span><b>100%</b> 通用逻辑</span>
       <span><b>0</b> 个人数据</span>
       <span><b>MIT</b> License</span>
@@ -404,6 +404,8 @@ const phrases = [
   '> workbuddy-asset-migration —— 一键迁移你的 AI 助手资产',
   '> liepin-search —— 猎聘超级搜索，JD 直达高分候选人',
   '> desktop-organizer —— 桌面文件智能归档，永不误删',
+  '> send-headhunting-email —— 建联邮件全自动，背调一键出',
+  '> robot-paper-campaign —— 顶会论文推送，顶会清单你来定',
   '> 复制 → 安装 → 开箱即用'
 ];
 let pi = 0, ci = 0, deleting = false;
@@ -443,6 +445,16 @@ const skills = [
     icon: '🗂️', cls: 'c4', name: 'desktop-organizer',
     desc: '桌面文件整理：简历按职位关键词自动分类归档、JD 脱敏转 PDF、全程不删除文件。',
     tags: ['File-Ops', 'PDF', 'Classification', 'Safe'], link: 'desktop-organizer/'
+  },
+  {
+    icon: '✉️', cls: 'c1', name: 'send-headhunting-email',
+    desc: '建联邮件全流程：搜候选人 → 找邮箱 → 定制 JD → 发送；候选人回复自动背调（ORCID/dblp/Scholar）。',
+    tags: ['SMTP', 'Recon', 'Backfill', 'Config'], link: 'send-headhunting-email/'
+  },
+  {
+    icon: '🤖', cls: 'c3', name: 'robot-paper-campaign',
+    desc: '顶会论文推送 + 自动建联：arXiv 搜顶会论文 → 找华人作者邮箱 → 发邮件 → 日报。顶会清单启动时自定义。',
+    tags: ['arXiv', 'Automation', 'Interactive', 'SMTP'], link: 'robot-paper-campaign/'
   }
 ];
 const grid = document.getElementById('skillsGrid');
