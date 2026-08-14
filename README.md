@@ -80,13 +80,6 @@ python scripts/run_jd_search.py "JD.pdf" --limit 30 --city 上海
 python scripts/classify_resumes.py ~/Downloads --out report.json
 ```
 
-## ✨ 特性
-
-- 🔌 **即插即用** — 目录即装即用，无需复杂配置
-- 🧩 **纯通用逻辑** — 只含操作流程与方法论，不含任何个人数据
-- 🖋️ **作者水印** — 每个 Skill 内置三重作者信息（frontmatter + Credits + 脚本运行时输出），可溯源
-- 🛡️ **安全优先** — 全程不删除文件、不触碰凭据、MIT 开源
-
 ## 👤 作者
 
 **Glen Wei（韦其像）** — 资深 AI 与具身智能领域猎头（TTC），专注 AI / 具身智能方向顶尖人才。

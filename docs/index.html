@@ -181,16 +181,6 @@
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
   @media (max-width: 760px) { .two-col { grid-template-columns: 1fr; } }
 
-  /* ===== 特性 ===== */
-  .feat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
-  .feat {
-    background: var(--panel); border: 1px solid var(--panel-border); border-radius: 14px; padding: 22px;
-    text-align: center; backdrop-filter: blur(8px);
-  }
-  .feat .f-icon { font-size: 26px; margin-bottom: 10px; }
-  .feat h4 { font-size: 15.5px; margin-bottom: 6px; }
-  .feat p { font-size: 13px; color: var(--text-dim); }
-
   /* ===== 作者 ===== */
   .author-box {
     background: var(--panel); border: 1px solid var(--panel-border); border-radius: 18px;
@@ -296,21 +286,6 @@
       </div>
     </div>
     <p style="text-align:center; color:var(--text-dim); font-size:13.5px; margin-top:16px">其他 AI 助手：把对应 skill 目录放入你的 skills 目录（如 <code style="color:var(--cyan)">~/.claude/skills/</code>），或直接阅读各 skill 的 <code style="color:var(--cyan)">SKILL.md</code>。</p>
-  </div>
-</section>
-
-<section id="why">
-  <div class="wrap">
-    <div class="sec-head">
-      <span class="kicker">// Why This</span>
-      <h2>为什么值得收藏</h2>
-    </div>
-    <div class="feat-grid">
-      <div class="feat"><div class="f-icon">🔌</div><h4>即插即用</h4><p>目录即装即用，无需复杂配置，文档齐全</p></div>
-      <div class="feat"><div class="f-icon">🧩</div><h4>纯通用逻辑</h4><p>只含操作流程与方法论，不含任何个人数据</p></div>
-      <div class="feat"><div class="f-icon">🖋️</div><h4>带作者水印</h4><p>运行时可见作者信息，尊重原创，可溯源</p></div>
-      <div class="feat"><div class="f-icon">🛡️</div><h4>安全优先</h4><p>全程不删除文件、不触碰凭据、MIT 开源</p></div>
-    </div>
   </div>
 </section>
 
@@ -427,17 +402,17 @@ type();
 /* ===== 技能卡片 ===== */
 const skills = [
   {
-    icon: '📄', cls: 'c1', name: 'markitdown-skill', 
+    icon: '📄', cls: 'c1', name: '文档转Markdown (markitdown-skill)', 
     desc: '文档转 Markdown：PDF / Word / PPT / 图片 OCR / 音频转写 / 网页 / YouTube，支持批量转换。',
     tags: ['Python', 'MarkItDown', 'OCR', 'Batch'], link: 'markitdown-skill/'
   },
   {
-    icon: '📦', cls: 'c2', name: 'workbuddy-asset-migration',
+    icon: '📦', cls: 'c2', name: '资产迁移 (workbuddy-asset-migration)',
     desc: 'WorkBuddy 资产迁移：CN / 海外版 / 跨机器之间迁移 skills、对话、配置、身份文件，合并不覆盖。',
     tags: ['Python', 'Zero-Dep', 'SQLite', 'Safe'], link: 'workbuddy-asset-migration/'
   },
   {
-    icon: '🎯', cls: 'c3', name: 'liepin-search',
+    icon: '🎯', cls: 'c3', name: '猎聘超级搜索 (liepin-search)',
     desc: '猎聘超级搜索：输入 JD 自动搜索、深度审查、评分候选人，输出带直达链接的推荐名单。',
     tags: ['CDP', 'Automation', 'Scoring', 'Chrome'], link: 'liepin-search/'
   },
@@ -447,12 +422,12 @@ const skills = [
     tags: ['Auto-Organize', 'Rename', 'Publish', 'Safe'], link: 'desktop-organizer/'
   },
   {
-    icon: '✉️', cls: 'c1', name: 'send-headhunting-email',
+    icon: '✉️', cls: 'c1', name: '建联邮件 (send-headhunting-email)',
     desc: '建联邮件全流程：搜候选人 → 找邮箱 → 定制 JD → 发送；候选人回复自动背调（ORCID/dblp/Scholar）。',
     tags: ['SMTP', 'Recon', 'Backfill', 'Config'], link: 'send-headhunting-email/'
   },
   {
-    icon: '🤖', cls: 'c3', name: 'robot-paper-campaign',
+    icon: '🤖', cls: 'c3', name: '顶会论文推送 (robot-paper-campaign)',
     desc: '顶会论文推送 + 自动建联：arXiv 搜顶会论文 → 找华人作者邮箱 → 发邮件 → 日报。顶会清单启动时自定义。',
     tags: ['arXiv', 'Automation', 'Interactive', 'SMTP'], link: 'robot-paper-campaign/'
   }
