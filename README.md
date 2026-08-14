@@ -28,7 +28,7 @@
 | 📄 [markitdown-skill](markitdown-skill/) | 文档转 Markdown：PDF / Word / PPT / 图片 OCR / 音频转写 / 网页 / YouTube | 基于微软 MarkItDown，支持批量转换 |
 | 📦 [workbuddy-asset-migration](workbuddy-asset-migration/) | WorkBuddy 资产迁移：CN↔海外版 / 跨机器迁移 skills、对话、配置、身份文件 | 纯标准库**零依赖**，合并不覆盖 |
 | 🎯 [liepin-search](liepin-search/) | 猎聘超级搜索：输入 JD → 自动搜索 + 深度审查 + 评分候选人 | 输出带直达链接的推荐名单，防误杀 |
-| 🗂️ [desktop-organizer](desktop-organizer/) | 桌面文件整理：简历按职位自动分类、JD 脱敏转 PDF | 全程**不删除文件**，安全归档 |
+| 🗂️ [超级桌面（desktop-organizer）](desktop-organizer/) | 桌面文件智能整理：判断方向 → 统一命名（姓名-方向.pdf）→ 归类一步完成；JD 脱敏转 PDF 并一键发布猎聘/小红书 | 全程**不删除文件**，安全归档 |
 | ✉️ [send-headhunting-email](send-headhunting-email/) | 建联邮件全流程：搜候选人 → 找邮箱 → 定制 JD → 发送；回复自动背调（ORCID/dblp/Scholar） | 身份信息全部可配置，纯逻辑可复用 |
 | 🤖 [robot-paper-campaign](robot-paper-campaign/) | 顶会论文推送 + 自动建联：arXiv 搜顶会论文 → 找华人作者邮箱 → 发邮件 → 日报 | **顶会/分类启动时用户自定义**，不再写死 |
 
