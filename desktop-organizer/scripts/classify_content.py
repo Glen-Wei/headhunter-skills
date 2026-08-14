@@ -103,7 +103,6 @@ def classify_content(text):
     return best, scores[best]
 
 def main():
-    print(AUTHOR_EPILOG, file=sys.stderr)
     args, opts = [], {}
     i = 1
     while i < len(sys.argv):
@@ -167,4 +166,5 @@ def main():
         print(f"✔ 已移动 {n} 个文件到 {target}")
 
 if __name__ == "__main__":
+    print(AUTHOR_EPILOG)
     main()

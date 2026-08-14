@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""简历职位分类预演/合并脚本 v3
+"""简历职位分类预演/合并脚本 v4
 
 用法:
     classify_resumes.py <目录...> --out report.json          预演（不移动）
     classify_resumes.py <目录...> --apply --target <根目录>  实际合并
 
-解析「姓名-职位-TTC.pdf」与「职位-姓名.pdf」式文件名，归一化为职位类目。
-重复文件（同名同大小）移至「_待确认重复/」；非简历资料（xlsx/xmind等）移至根目录。
+流程（判断方向 → 统一命名 → 归类，一步完成）：
+    1. 按文件名解析职位关键词，归一化为职位类目（= 判断方向）；
+    2. 移动落盘时按「姓名-方向.pdf」规约命名（复用 rename_to_convention.propose_rename，
+       方向 = 目标类目文件夹名；无法提取姓名的保持原名并计入汇报）；
+    3. 移入 ~/Desktop/简历库/<类目>/；重复文件（同名同大小）移至「_待确认重复/」；
+       非简历资料（xlsx/xmind等）移至根目录。
 
 Created & maintained by Glen Wei (韦其像) — https://github.com/Glen-Wei
 Email: glen.keeming@gmail.com | WeChat: Glen_Wei88
@@ -19,6 +23,9 @@ AUTHOR_EPILOG = (
     "| Email: glen.keeming@gmail.com | WeChat: Glen_Wei88 | "
     "Part of headhunter-skills: https://github.com/Glen-Wei/headhunter-skills"
 )
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from rename_to_convention import propose_rename
 
 # 职位关键词 → 标准类目（顺序敏感，长的优先；中文与英文缩写粘连时 \b 会失效，缩写直接子串匹配）
 RULES = [
@@ -137,11 +144,13 @@ def scan(dirs, dedup_target=None):
                     results.setdefault("__重复__", []).append({"file": f, "from": root, "dup_of": seen[key]})
                     continue
                 seen[key] = path
-                results.setdefault(cat, []).append({"file": f, "from": root})
+                p = propose_rename(CATEGORY_MAP.get(cat, cat), f) if not cat.startswith("__") else None
+                new = p["new"] if (p and p["status"] in ("rename", "noop") and p["new"]) else None
+                results.setdefault(cat, []).append({"file": f, "from": root, "new": new})
     return results
 
 def apply_moves(results, target_root):
-    moved = skipped = 0
+    moved = renamed = 0
     for cat, items in results.items():
         if cat == "__非简历__":
             dest = target_root
@@ -152,16 +161,24 @@ def apply_moves(results, target_root):
         os.makedirs(dest, exist_ok=True)
         for it in items:
             src = os.path.join(it["from"], it["file"])
-            dst = os.path.join(dest, it["file"])
+            newname = it["file"]
+            if not cat.startswith("__"):
+                # 简历：判断方向(类目)后，按 姓名-方向 规约命名再落盘（先命名后归类）
+                p = propose_rename(CATEGORY_MAP.get(cat, cat), it["file"])
+                if p and p["status"] in ("rename", "noop") and p["new"]:
+                    newname = p["new"]
+                    if newname != it["file"]:
+                        renamed += 1
+                # skip（无法提取姓名）保持原名，汇报时列入待人工处理
+            dst = os.path.join(dest, newname)
             if os.path.exists(dst):
-                base, ext = os.path.splitext(it["file"])
+                base, ext = os.path.splitext(newname)
                 dst = os.path.join(dest, f"{base}_2{ext}")
             shutil.move(src, dst)
             moved += 1
-    return moved
+    return moved, renamed
 
 def main():
-    print(AUTHOR_EPILOG, file=sys.stderr)
     args, opts = [], {}
     i = 1
     while i < len(sys.argv):
@@ -192,15 +209,17 @@ def main():
         print(f"[{c}] {len(items)}  ({tag})")
         for it in items[:5]:
             dup = f"  ⚠重复→{it['dup_of']}" if "dup_of" in it else ""
-            print(f"   {it['file']}{dup}")
+            nn = f"  → 新名: {it['new']}" if it.get("new") else ""
+            print(f"   {it['file']}{dup}{nn}")
         if len(items) > 5:
             print(f"   ... 共 {len(items)} 个")
     total = sum(len(v) for k, v in results.items() if not k.startswith("__"))
     print(f"\n# 简历 {total} 份 / 类目 {sum(1 for k in results if not k.startswith('__'))} 个 / 重复 {len(results.get('__重复__', []))} / 非简历 {len(results.get('__非简历__', []))}")
     if apply_move:
         assert target, "--target 必填"
-        n = apply_moves(results, target)
-        print(f"✔ 已移动 {n} 个文件到 {target}")
+        n, rn = apply_moves(results, target)
+        print(f"✔ 已移动 {n} 个文件到 {target}（其中按「姓名-方向」规约重命名 {rn} 个）")
 
 if __name__ == "__main__":
+    print(AUTHOR_EPILOG)
     main()
