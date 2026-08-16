@@ -10,27 +10,23 @@
 
 注意: 猎聘某些筛选为单行（同排互斥，如工作年限的"10年以上"与"5-10年"），
       设置前会先点击同组"不限"复位，再点目标项。
-
-Created & maintained by Glen Wei (韦其像) — https://github.com/Glen-Wei
-Email: glen.keeming@gmail.com | WeChat: Glen_Wei88
-Part of headhunter-skills: https://github.com/Glen-Wei/headhunter-skills"""
+"""
 import sys, time, json, argparse
-from browser_harness.helpers import list_tabs, cdp, switch_tab
-
-AUTHOR_EPILOG = (
-    "Author: Glen Wei (韦其像) | GitHub: https://github.com/Glen-Wei "
-    "| Email: glen.keeming@gmail.com | WeChat: Glen_Wei88 | "
-    "Part of headhunter-skills: https://github.com/Glen-Wei/headhunter-skills"
-)
+from browser_harness.helpers import list_tabs, cdp
 
 def connect():
+    """静默连接到猎聘tab：只 attach 不激活，不抢焦点、不弹窗。
+    禁用 switch_tab（内部 Target.activateTarget 抢焦点）。"""
     tabs = list_tabs()
     for t in tabs:
         if "h.liepin.com" in t.get("url",""):
-            switch_tab(t["targetId"]); time.sleep(1)
             return cdp("Target.attachToTarget", targetId=t["targetId"], flatten=True).get("sessionId")
-    nt = cdp("Target.createTarget", url="https://h.liepin.com/")
-    switch_tab(nt.get("targetId")); time.sleep(4)
+    # 无猎聘tab：后台创建，不激活
+    try:
+        nt = cdp("Target.createTarget", url="https://h.liepin.com/", background=True)
+    except Exception:
+        nt = cdp("Target.createTarget", url="https://h.liepin.com/")
+    time.sleep(4)
     return cdp("Target.attachToTarget", targetId=nt.get("targetId"), flatten=True).get("sessionId")
 
 def js(sid, expr):
@@ -136,7 +132,7 @@ def apply_all(sid, max_age=None, min_years=None, min_edu=None, city=None, gender
     return True
 
 def main():
-    ap = argparse.ArgumentParser(description='猎聘前置条件设置', epilog=AUTHOR_EPILOG, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap = argparse.ArgumentParser(description='猎聘前置条件设置')
     ap.add_argument('--max-age', type=int)
     ap.add_argument('--min-years', type=int)
     ap.add_argument('--min-edu', choices=['本科','硕士','博士'])

@@ -11,17 +11,8 @@
 输出:
   <JD名>_report.md   最终名单（按合适度排序，含直达链接）
   <JD名>_results.json 每人完整简历+评分明细
-
-Created & maintained by Glen Wei (韦其像) — https://github.com/Glen-Wei
-Email: glen.keeming@gmail.com | WeChat: Glen_Wei88
-Part of headhunter-skills: https://github.com/Glen-Wei/headhunter-skills"""
+"""
 import sys, os, subprocess, json, argparse, time
-
-AUTHOR_EPILOG = (
-    "Author: Glen Wei (韦其像) | GitHub: https://github.com/Glen-Wei "
-    "| Email: glen.keeming@gmail.com | WeChat: Glen_Wei88 | "
-    "Part of headhunter-skills: https://github.com/Glen-Wei/headhunter-skills"
-)
 
 SKILL = os.path.dirname(os.path.abspath(__file__))
 
@@ -57,9 +48,10 @@ def build_keywords(jd, base=None):
     return ','.join(keywords[:6])
 
 def main():
-    ap = argparse.ArgumentParser(description='猎聘一键JD搜索', epilog=AUTHOR_EPILOG, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap = argparse.ArgumentParser(description='猎聘一键JD搜索')
     ap.add_argument('jd_file', help='JD文件路径 (docx/pdf/txt)')
     ap.add_argument('--limit', type=int, default=20, help='最多深度审查人数（分批，默认20）')
+    ap.add_argument('--pages', type=int, default=1, help='每关键词搜索翻页数（每页约20人，默认1页）')
     ap.add_argument('--max-age', type=int, help='覆盖年龄上限')
     ap.add_argument('--min-years', type=int, help='覆盖工作年限下限')
     ap.add_argument('--min-edu', choices=['本科','硕士','博士'], help='覆盖学历下限')
@@ -106,6 +98,7 @@ def main():
            '--jd-json', jd_json,
            '--max-age', str(max_age),
            '--limit', str(args.limit),
+           '--pages', str(args.pages),
            '--output', out_prefix]
     if city: cmd += ['--city', city]
     if gender: cmd += ['--gender', gender]

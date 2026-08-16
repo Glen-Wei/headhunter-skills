@@ -20,18 +20,9 @@
   <prefix>_results.json     每人完整简历文本 + 结构化字段 + 评分 + 证据
   <prefix>_report.md        判定报告（评分排名 + 匹配理由 + 疑虑点）
   progress.json             断点进度
-
-Created & maintained by Glen Wei (韦其像) — https://github.com/Glen-Wei
-Email: glen.keeming@gmail.com | WeChat: Glen_Wei88
-Part of headhunter-skills: https://github.com/Glen-Wei/headhunter-skills"""
+"""
 import sys, os, time, json, re, argparse, random, datetime
-from browser_harness.helpers import list_tabs, cdp, switch_tab, new_tab, goto_url, close_tab, wait_for_load
-
-AUTHOR_EPILOG = (
-    "Author: Glen Wei (韦其像) | GitHub: https://github.com/Glen-Wei "
-    "| Email: glen.keeming@gmail.com | WeChat: Glen_Wei88 | "
-    "Part of headhunter-skills: https://github.com/Glen-Wei/headhunter-skills"
-)
+from browser_harness.helpers import list_tabs, cdp
 
 # ---------------------------------------------------------------- JD 配置
 DEFAULT_JD = {
@@ -71,23 +62,27 @@ def load_jd(path=None):
 
 # ---------------------------------------------------------------- 浏览器操作
 def get_session():
+    """连接到猎聘tab（静默：只 attach 不激活，不抢焦点、不弹窗）。
+    禁用 switch_tab：其内部 Target.activateTarget 会把 tab 切到前台，打断用户。"""
     tabs = list_tabs()
     for t in tabs:
         if "h.liepin.com" in t.get("url", ""):
-            switch_tab(t["targetId"])
+            # 直接 attach 获取 sessionId，不激活该 tab
+            sid = cdp("Target.attachToTarget", targetId=t["targetId"], flatten=True).get("sessionId")
             time.sleep(0.5)
-            return True
-    # 没有猎聘tab则新建
-    new_tab("https://h.liepin.com/")
+            return sid
+    # 没有猎聘tab：后台创建（background=True 不抢焦点），不激活
+    tid = cdp("Target.createTarget", url="https://h.liepin.com/", background=True).get("targetId")
     time.sleep(3)
-    return True
+    return cdp("Target.attachToTarget", targetId=tid, flatten=True).get("sessionId")
 
 # 全局后台标签页（复用，避免每份简历都弹新标签打断用户）
 _BG_TAB_ID = None
 _BG_SID = None
 
 def _bg_tab():
-    """获取（或创建）后台标签页 session。background=True 不抢焦点，不打断用户。"""
+    """获取（或创建）后台标签页 session。background=True 不抢焦点，不打断用户。
+    禁用 switch_tab/new_tab（内部会 Target.activateTarget 抢焦点）。"""
     global _BG_TAB_ID, _BG_SID
     if _BG_SID:
         return _BG_SID
@@ -96,7 +91,17 @@ def _bg_tab():
         _BG_TAB_ID = tid
         _BG_SID = cdp("Target.attachToTarget", targetId=tid, flatten=True).get("sessionId")
     except Exception:
-        # 某些环境不支持 background 参数，退回普通创建
+        # 某些环境不支持 background 参数，退回复用已有猎聘 tab（attach 不激活）
+        try:
+            tabs = list_tabs()
+            for t in tabs:
+                if "h.liepin.com" in t.get("url", ""):
+                    _BG_TAB_ID = t["targetId"]
+                    _BG_SID = cdp("Target.attachToTarget", targetId=t["targetId"], flatten=True).get("sessionId")
+                    return _BG_SID
+        except Exception:
+            pass
+        # 最后兜底：普通创建（不 activate），后续操作仅通过 attach 的 session 驱动
         tid = cdp("Target.createTarget", url="about:blank").get("targetId")
         _BG_TAB_ID = tid
         _BG_SID = cdp("Target.attachToTarget", targetId=tid, flatten=True).get("sessionId")
@@ -104,13 +109,14 @@ def _bg_tab():
 
 def open_resume_text(cid, max_retry=2):
     """显式CDP控制：在后台标签页打开简历详情页 → 展开折叠区块 → 提取完整innerText。
-    复用单个后台标签页（background=True），全程不抢焦点、不弹窗，不打断用户。"""
+    复用单个后台标签页（background=True），全程不抢焦点、不弹窗，不打断用户。
+    提速：用 DOM 就绪检测替代固定 sleep（等"工作经历/求职意向"区块渲染出来即提取）。"""
     url = f"https://h.liepin.com/resume/showresumedetail/?res_id_encode={cid}"
     for attempt in range(max_retry):
         try:
             sid = _bg_tab()
             cdp("Page.navigate", session_id=sid, url=url)
-            # 等待页面加载完成
+            # 等待页面加载完成（readyState 轮询，间隔从0.5s压到0.3s）
             for _ in range(40):
                 try:
                     st = cdp("Runtime.evaluate", session_id=sid,
@@ -119,8 +125,19 @@ def open_resume_text(cid, max_retry=2):
                         break
                 except Exception:
                     pass
-                time.sleep(0.5)
-            time.sleep(random.uniform(2.5, 3.5))  # 等详情渲染
+                time.sleep(0.3)
+            # 等简历正文渲染（出现"工作经历/求职意向"即就绪，替代固定 sleep 2.5-3.5s）
+            for _ in range(40):
+                try:
+                    st = cdp("Runtime.evaluate", session_id=sid, returnByValue=True,
+                             expression=("(document.body.innerText||'').length > 300 "
+                                         "&& (document.body.innerText.indexOf('工作经历') >= 0 "
+                                         "|| document.body.innerText.indexOf('求职意向') >= 0)"))
+                    if st.get("result", {}).get("value"):
+                        break
+                except Exception:
+                    pass
+                time.sleep(0.4)
             # 展开所有折叠区块（"显示其他N段..."）
             for _ in range(4):
                 r = cdp("Runtime.evaluate", session_id=sid, returnByValue=True, expression="""
@@ -131,8 +148,8 @@ def open_resume_text(cid, max_retry=2):
                 })()""")
                 if not r.get("result", {}).get("value"):
                     break
-                time.sleep(1.2)
-            time.sleep(0.8)
+                time.sleep(0.8)
+            time.sleep(0.5)
             r = cdp("Runtime.evaluate", session_id=sid, returnByValue=True,
                     expression="document.body.innerText || ''")
             text = r.get("result", {}).get("value") or ""
@@ -373,6 +390,13 @@ def check_hard_requirements(body, basic, jd):
             if not design_signal:
                 fails.append("无机械设计岗位证据")
 
+    # 0.6 产品方向：简历必须出现过末端执行器类产品词（至少其一）
+    prod_kw = hard.get('product_keywords')
+    if prod_kw:
+        hit_prod = [w for w in prod_kw if w.lower() in low]
+        if not hit_prod:
+            fails.append(f"无末端执行器类产品经验({'/'.join(prod_kw[:4])}等)")
+
     # 1. 学历下限
     min_edu = hard.get('min_edu')
     if min_edu:
@@ -409,6 +433,47 @@ def check_hard_requirements(body, basic, jd):
 
     return fails
 
+# ---------------------------------------------------------------- 卡片粗筛
+
+def card_prefilter(d, max_age=40, min_edu=None, min_years=None, city=None, gender=None):
+    """基于搜索列表卡片文本做【保守】粗筛：仅跳过明确不符合的候选人，信息不足一律保留。
+    返回 (通过bool, 跳过原因str)。"""
+    text = d.get('text', '')
+    reasons = []
+
+    # 年龄：卡片含 "X岁"
+    if max_age < 99:
+        m = re.search(r'(\d+)岁', text)
+        if m and int(m.group(1)) > max_age:
+            reasons.append(f"年龄{int(m.group(1))}岁>{max_age}")
+
+    # 工作年限：卡片含 "工作X年"
+    if min_years:
+        m = re.search(r'工作(\d+)年', text)
+        if m and int(m.group(1)) < min_years:
+            reasons.append(f"年限{int(m.group(1))}年<{min_years}年")
+
+    # 学历：卡片含 大专/本科/硕士/博士
+    if min_edu:
+        m = re.search(r'(博士|硕士|本科|大专)', text)
+        if m and EDU_RANK.get(m.group(1), 0) < EDU_RANK.get(min_edu, 0):
+            reasons.append(f"学历{m.group(1)}<{min_edu}")
+
+    # 性别：卡片含 "男"/"女"（姓名常带*号，谨慎判断：出现"女"字样且非"女士"语境才判）
+    if gender:
+        m = re.search(r'([男女])(?=[\u4e00-\u9fa5]{1,4}\d*岁|\d*岁)', text)
+        if m and m.group(1) != gender:
+            reasons.append(f"性别{m.group(1)}")
+
+    # 城市：卡片含城市名（出现在"求职期望"附近）
+    if city and city in text:
+        pass  # 命中目标城市，保留（不筛）
+    elif city and not reasons:
+        # 未命中城市但也没其他硬伤 → 保守保留（候选人在卡片中可能未显示城市）
+        pass
+
+    return (len(reasons) == 0, ';'.join(reasons))
+
 # ---------------------------------------------------------------- 主流程
 def collect_candidates(args):
     """返回候选 cid 列表（按给定顺序）"""
@@ -442,19 +507,33 @@ def collect_candidates(args):
         kw = kw.strip()
         print(f"搜索: {kw}")
         try:
-            data = search_keyword(kw, sid, filters=pre_filters or None)
+            data = search_keyword(kw, sid, filters=pre_filters or None, pages=args.pages)
             all_raw.extend(data)
             print(f"  -> {len(data)}")
         except Exception as e:
             print(f"  搜索失败: {e}")
     seen, uniq = set(), []
+    skipped = []
     for d in all_raw:
-        if d['cid'] not in seen:
-            seen.add(d['cid']); uniq.append(d['cid'])
+        if d['cid'] in seen:
+            continue
+        seen.add(d['cid'])
+        # 卡片粗筛（保守：只跳过明确不符的）
+        if not args.no_card_filter:
+            ok, why = card_prefilter(d, max_age=args.max_age if args.max_age < 99 else 99,
+                                     min_edu=args.pre_min_edu, min_years=args.pre_min_years)
+            if not ok:
+                skipped.append((d['cid'], why))
+                continue
+        uniq.append(d['cid'])
+    if skipped:
+        print(f"  🗑️ 卡片粗筛跳过 {len(skipped)} 人: " +
+              '; '.join(f"{c[:8]}({w})" for c, w in skipped[:8]) +
+              (" ..." if len(skipped) > 8 else ""))
     return uniq[:args.top] if args.top else uniq
 
 def main():
-    ap = argparse.ArgumentParser(description='猎聘深度简历审查', epilog=AUTHOR_EPILOG, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap = argparse.ArgumentParser(description='猎聘深度简历审查')
     ap.add_argument('--keywords', help='搜索关键词(逗号分隔)')
     ap.add_argument('--cids', help='直接审查指定简历cid(逗号分隔)')
     ap.add_argument('--cids-file', help='从文件读取cid列表（每行一个或逗号分隔）')
@@ -465,6 +544,8 @@ def main():
     ap.add_argument('--output', default='liepin_deep')
     ap.add_argument('--resume', action='store_true', help='断点续跑')
     ap.add_argument('--limit', type=int, default=0, help='最多审查人数')
+    ap.add_argument('--pages', type=int, default=1, help='每关键词搜索翻页数（每页约20人，默认1页）')
+    ap.add_argument('--no-card-filter', action='store_true', help='关闭卡片粗筛（默认开启：开详情页前先筛掉明确不符者）')
     ap.add_argument('--city', help='硬性城市条件（如 上海），命中求职意向/现居任一即通过')
     ap.add_argument('--gender', help='硬性别条件（男/女）')
     # 前置筛选（在猎聘搜索页直接设置，从源头过滤）

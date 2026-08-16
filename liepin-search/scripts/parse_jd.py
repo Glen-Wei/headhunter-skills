@@ -15,17 +15,8 @@ JD解析器 (parse_jd.py)
   - skills     : 加分技能词 (评分用)
   - industry   : 行业词 (评分用)
   - cities     : 期望城市加分列表
-
-Created & maintained by Glen Wei (韦其像) — https://github.com/Glen-Wei
-Email: glen.keeming@gmail.com | WeChat: Glen_Wei88
-Part of headhunter-skills: https://github.com/Glen-Wei/headhunter-skills"""
+"""
 import sys, os, re, json, argparse
-
-AUTHOR_EPILOG = (
-    "Author: Glen Wei (韦其像) | GitHub: https://github.com/Glen-Wei "
-    "| Email: glen.keeming@gmail.com | WeChat: Glen_Wei88 | "
-    "Part of headhunter-skills: https://github.com/Glen-Wei/headhunter-skills"
-)
 
 # 学历等级
 EDU_RANK = {'大专': 1, '本科': 2, '硕士': 3, '博士': 4}
@@ -151,7 +142,7 @@ def parse(text):
     return jd
 
 def main():
-    ap = argparse.ArgumentParser(epilog=AUTHOR_EPILOG, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap = argparse.ArgumentParser()
     ap.add_argument('jd_file', help='JD文件路径 (docx/pdf/txt)')
     ap.add_argument('--output', '-o', default=None)
     args = ap.parse_args()

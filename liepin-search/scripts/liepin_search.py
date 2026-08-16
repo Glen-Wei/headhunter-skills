@@ -1,34 +1,142 @@
 """
 猎聘超级搜索脚本 - 批量搜索、提取、评分候选人
 用法: python liepin_search.py -k "关键词1,关键词2,关键词3" [--output <文件>]
-
-Created & maintained by Glen Wei (韦其像) — https://github.com/Glen-Wei
-Email: glen.keeming@gmail.com | WeChat: Glen_Wei88
-Part of headhunter-skills: https://github.com/Glen-Wei/headhunter-skills"""
+"""
 import sys, time, json, re, argparse
 # browser-harness should be pip installed - no manual path needed
-from browser_harness.helpers import list_tabs, cdp, switch_tab
-
-AUTHOR_EPILOG = (
-    "Author: Glen Wei (韦其像) | GitHub: https://github.com/Glen-Wei "
-    "| Email: glen.keeming@gmail.com | WeChat: Glen_Wei88 | "
-    "Part of headhunter-skills: https://github.com/Glen-Wei/headhunter-skills"
-)
+from browser_harness.helpers import list_tabs, cdp
 
 def js(expr, sid=None):
     r = cdp("Runtime.evaluate", session_id=sid, expression=expr, returnByValue=True, awaitPromise=False)
     return r.get("result",{}).get("value")
 
+def wait_for(sid, expr, timeout=12, interval=0.3):
+    """轮询等待 JS 表达式返回真值（DOM就绪检测，替代固定sleep）。
+    返回 True=已就绪；False=超时。"""
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        try:
+            r = cdp("Runtime.evaluate", session_id=sid, expression=expr,
+                    returnByValue=True, awaitPromise=False)
+            if r.get("result", {}).get("value"):
+                return True
+        except Exception:
+            pass
+        time.sleep(interval)
+    return False
+
+def search_kw_direct(kw, sid, filters=None, pages=1, max_per_page=20):
+    """搜索单一关键词（支持前置筛选+翻页），DOM就绪检测替代固定sleep。
+    返回候选列表 [{cid, text, name, age, edu, years, city, cur}]。"""
+    cdp("Page.navigate", session_id=sid,
+        url="https://h.liepin.com/search/getConditionItem?searchType=1")
+    # 等页面加载 + 搜索框出现（旧代码固定 sleep 3s）
+    wait_for(sid, "document.readyState==='complete' && document.querySelectorAll('input[type=search]').length >= 2", timeout=15)
+    apply_pre_filters(sid, filters)
+
+    # 设置搜索框
+    js("""
+    var input = document.querySelectorAll('input[type=search]')[1];
+    if (input) {
+        input.focus();
+        var setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+        setter.call(input, arguments[0]);
+        input.dispatchEvent(new Event('input', {bubbles: true}));
+        input.dispatchEvent(new Event('change', {bubbles: true}));
+    }
+    """, sid)
+    js("""
+    var input = document.querySelectorAll('input[type=search]')[1];
+    if (input) {
+        input.focus();
+        var setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+        setter.call(input, '""" + kw + """');
+        input.dispatchEvent(new Event('input', {bubbles: true}));
+        input.dispatchEvent(new Event('change', {bubbles: true}));
+    }
+    """, sid)
+    time.sleep(0.4)
+
+    # 点击搜索
+    js("var btn = document.querySelector('.search-btn'); if (btn) btn.click();", sid)
+    # 等结果卡片出现（旧代码固定 sleep 5s）
+    wait_for(sid, "document.querySelectorAll('[data-tlg-scm]').length > 0", timeout=12)
+    time.sleep(1.0)  # 等首屏渲染稳定
+
+    # 收集当前页
+    all_raw = extract_cards(sid, max_per_page)
+    # 翻页
+    for _ in range(max(0, pages - 1)):
+        clicked = js("""
+        (function(){
+            var btns = document.querySelectorAll('.ant-pagination-next, .ant-pagination-item');
+            var next = null;
+            for (var b of btns) {
+                if (b.className.indexOf('next') >= 0) { next = b; break; }
+            }
+            if (next && next.className.indexOf('disabled') < 0) {
+                next.click();
+                return true;
+            }
+            return false;
+        })()
+        """, sid)
+        if not clicked:
+            break
+        wait_for(sid, "document.querySelectorAll('[data-tlg-scm]').length > 0", timeout=10)
+        time.sleep(0.8)
+        more = extract_cards(sid, max_per_page)
+        if not more:
+            break
+        all_raw.extend(more)
+    # 去重
+    seen, uniq = set(), []
+    for d in all_raw:
+        if d['cid'] not in seen:
+            seen.add(d['cid']); uniq.append(d)
+    return uniq
+
+def extract_cards(sid, max_per_page=20, text_limit=2000):
+    """从搜索列表页提取候选人卡片。text_limit 默认取 2000 字符（旧版只取400，
+    粗筛/初判信息不足）。"""
+    raw = js("""
+    (function() {
+        var results = [];
+        var els = document.querySelectorAll('[data-tlg-scm]');
+        var seen = {};
+        for (var i = 0; i < els.length; i++) {
+            var scm = els[i].getAttribute('data-tlg-scm');
+            var m = scm && scm.match(/cid=([a-zA-Z0-9]+)/);
+            if (!m || seen[m[1]]) continue;
+            seen[m[1]] = true;
+            results.push({
+                cid: m[1],
+                text: (els[i].textContent || '').trim().substring(0, %d)
+            });
+            if (results.length >= %d) break;
+        }
+        return JSON.stringify(results);
+    })()
+    """ % (text_limit, max_per_page), sid)
+    return json.loads(raw) if raw else []
+
 def connect():
-    """连接到猎聘tab"""
+    """连接到猎聘tab（静默：只 attach 不激活，不抢焦点、不弹窗）。
+    禁用 switch_tab：其内部 Target.activateTarget 会把 tab 切到前台，打断用户。"""
     tabs = list_tabs()
     for t in tabs:
         if "h.liepin.com" in t.get("url",""):
-            switch_tab(t["targetId"])
-            time.sleep(1)
+            # 直接 attach 获取 sessionId，不激活该 tab
             sid = cdp("Target.attachToTarget", targetId=t["targetId"], flatten=True).get("sessionId")
+            time.sleep(1)
             return sid
-    return None
+    # 没有猎聘 tab：后台创建（background=True 不抢焦点），不激活
+    try:
+        tid = cdp("Target.createTarget", url="https://h.liepin.com/", background=True).get("targetId")
+    except Exception:
+        tid = cdp("Target.createTarget", url="about:blank").get("targetId")
+    time.sleep(4)
+    return cdp("Target.attachToTarget", targetId=tid, flatten=True).get("sessionId")
 
 def apply_pre_filters(sid, filters=None):
     """在猎聘搜索条件页设置前置筛选（年龄/年限/学历/城市/性别）。
@@ -115,67 +223,9 @@ def apply_pre_filters(sid, filters=None):
         """ % filters['gender'], sid)
         time.sleep(0.5)
 
-def search_keyword(kw, sid, filters=None):
-    """搜索单一关键词（支持前置筛选）"""
-    cdp("Page.navigate", session_id=sid, url="https://h.liepin.com/search/getConditionItem?searchType=1")
-    time.sleep(3)
-    apply_pre_filters(sid, filters)
-    
-    # 设置搜索框
-    js("""
-    var input = document.querySelectorAll('input[type=search]')[1];
-    if (input) {
-        input.focus();
-        var setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
-        setter.call(input, arguments[0]);
-        input.dispatchEvent(new Event('input', {bubbles: true}));
-        input.dispatchEvent(new Event('change', {bubbles: true}));
-    }
-    """, sid)
-    
-    # 注意：上面的arguments[0]需要传参，使用拼接方式
-    js("""
-    var input = document.querySelectorAll('input[type=search]')[1];
-    if (input) {
-        input.focus();
-        var setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
-        setter.call(input, '""" + kw + """');
-        input.dispatchEvent(new Event('input', {bubbles: true}));
-        input.dispatchEvent(new Event('change', {bubbles: true}));
-    }
-    """, sid)
-    time.sleep(0.5)
-    
-    # 点击搜索
-    js("var btn = document.querySelector('.search-btn'); if (btn) btn.click();", sid)
-    time.sleep(5)
-    
-    text = js("document.body.innerText", sid) or ""
-    if len(text) < 3000:
-        return []
-    
-    # 提取候选人
-    raw = js("""
-    (function() {
-        var results = [];
-        var els = document.querySelectorAll('[data-tlg-scm]');
-        var seen = {};
-        for (var i = 0; i < els.length; i++) {
-            var scm = els[i].getAttribute('data-tlg-scm');
-            var m = scm && scm.match(/cid=([a-zA-Z0-9]+)/);
-            if (!m || seen[m[1]]) continue;
-            seen[m[1]] = true;
-            results.push({
-                cid: m[1],
-                text: (els[i].textContent || '').trim().substring(0, 400)
-            });
-            if (results.length >= 20) break;
-        }
-        return JSON.stringify(results);
-    })()
-    """, sid)
-    
-    return json.loads(raw) if raw else []
+def search_keyword(kw, sid, filters=None, pages=1, max_per_page=20):
+    """搜索单一关键词（兼容旧接口，转发到 DOM就绪检测版）"""
+    return search_kw_direct(kw, sid, filters=filters, pages=pages, max_per_page=max_per_page)
 
 def parse_candidates(raw_list, max_age=40):
     """解析候选人信息并评分（默认过滤40岁以上）"""
@@ -255,9 +305,10 @@ def save_md(candidates, filename, keywords=""):
             f.write(f"| {i+1} | {c['name']} | {c['age']} | {c['edu']} | {c['school']} | {c['company'][:25]} | {tag_str} | [👉直达]({c['link']}) |\n")
 
 def main():
-    parser = argparse.ArgumentParser(description='猎聘超级搜索', epilog=AUTHOR_EPILOG, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(description='猎聘超级搜索')
     parser.add_argument('-k', '--keywords', required=True, help='搜索关键词，逗号分隔')
     parser.add_argument('-o', '--output', default='liepin_search_results.md', help='输出文件')
+    parser.add_argument('--pages', type=int, default=1, help='每关键词翻页数（每页约20人）')
     parser.add_argument('--max-age', type=int, default=40, help='年龄上限（默认40岁）')
     parser.add_argument('--no-age-filter', action='store_true', help='关闭年龄过滤')
     parser.add_argument('--pre-max-age', type=int, help='前置筛选: 年龄上限（在猎聘页面设置）')
@@ -284,7 +335,7 @@ def main():
     all_raw = []
     for kw in keywords:
         print(f"🔍 搜索: {kw}")
-        data = search_keyword(kw, sid, filters=filters or None)
+        data = search_keyword(kw, sid, filters=filters or None, pages=args.pages)
         all_raw.extend(data)
         print(f"   → {len(data)} 条")
     
