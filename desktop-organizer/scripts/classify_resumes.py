@@ -80,10 +80,16 @@ CATEGORY_MAP = {
 STRIP_PREFIX = re.compile(r"^ATCH\d+[_-]?")
 CAREER_HINT = re.compile(r"工程师|负责人|经理|专家|总监|主管|顾问|研究员|算法|设计|师$|员$|Lead|leader|\bPM\b|\bPR\b|\bTA\b|\bVP\b|\bCEO\b|\bCTO\b|技术|运营|销售|市场|开发|硬件|软件|结构|算法|仿真|测试|数据|战略|生态|商务|供应链|嵌入式|总监|总裁|首席|博士后")
 
+# 简历文件名常以「-机构/公司品牌名」结尾（如「姓名-职位-XX公司.pdf」），归类前剥离末尾品牌后缀。
+# 词表按使用者业务自行配置（匹配时自动忽略大小写），无需修改其它代码。
+BRAND_SUFFIXES = []  # 例如 ["XX招聘", "TalentCo", "Agency"]，留空则跳过品牌后缀剥离
+_BRAND_RE = re.compile(r"[-_ ]*(?:" + "|".join(map(re.escape, BRAND_SUFFIXES)) + r")\d*$", flags=re.I)
+
 def clean_name(filename):
     name = os.path.splitext(filename)[0]
     name = STRIP_PREFIX.sub("", name)
-    name = re.sub(r"[-_ ]*TTC\d*$", "", name, flags=re.I)
+    if BRAND_SUFFIXES:
+        name = _BRAND_RE.sub("", name)
     name = re.sub(r"[-_]*\d{2,}$", "", name)
     name = re.sub(r"[（(].*?[)）]", "", name)
     name = re.sub(r"[-_]{2,}", "-", name)
