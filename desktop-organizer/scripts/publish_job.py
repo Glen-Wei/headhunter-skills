@@ -12,7 +12,7 @@
                 industry='人工智能', need_admin_approval=True)
 流程：新增代招企业→名称→类别联想→城市+区→薪资→学历/年限→行业→描述→同意框→发布→
       广告法违禁词自动替换重试→确认状态。
-基于 2026-08-14 首发验证的 selector 与事件序列；页面改版时函数报错并 dump 当前状态。
+基于验证过的 selector 与事件序列；页面改版时函数报错并 dump 当前状态。
 
 Created & maintained by Glen Wei (韦其像) — https://github.com/Glen-Wei
 Email: glen.keeming@gmail.com | WeChat: Glen_Wei88
@@ -65,15 +65,27 @@ def _open_select(label, idx=0):
     """)
 
 def _pick_option(text, contains=True):
-    """点击当前打开的标准下拉中的选项"""
-    return js(f"""
-    (()=>{{
+    """点击当前打开的标准下拉中的选项（支持 -/~ 变体，如 5-10年 → 5~10年）"""
+    variants = {text}
+    if '-' in text: variants.add(text.replace('-', '~'))
+    if '~' in text: variants.add(text.replace('~', '-'))
+    for v in variants:
+        hit = js(f"""
+        (()=>{{
+          const opts = Array.from(document.querySelectorAll('.ant-select-dropdown:not(.ant-select-dropdown-hidden) .ant-select-item-option'));
+          const hit = opts.find(o=>{'o.innerText.trim()==='+json.dumps(v) if not contains else "o.innerText.includes('"+v+"')"});
+          if(!hit) return null;
+          hit.click();
+          return 'selected: ' + hit.innerText.trim().slice(0,20);
+        }})()
+        """)
+        if hit:
+            return hit
+    return js("""
+    (()=>{
       const opts = Array.from(document.querySelectorAll('.ant-select-dropdown:not(.ant-select-dropdown-hidden) .ant-select-item-option'));
-      const hit = opts.find(o=>{'{o.innerText.trim()==='+json.dumps(text)+'}' if not contains else f"o.innerText.includes('{text}')"});
-      if(!hit) return 'no option: ' + opts.map(o=>o.innerText.trim()).join(',');
-      hit.click();
-      return 'selected: ' + hit.innerText.trim().slice(0,20);
-    }})()
+      return 'no option: ' + opts.map(o=>o.innerText.trim()).join(',');
+    })()
     """)
 
 def _scroll_salary_to(target_k):
@@ -93,9 +105,9 @@ def _scroll_salary_to(target_k):
         }})()
         """)
     lo, hi = 0, 14000  # 上限约 500*20px
-    for _ in range(12):
+    for _ in range(10):
         set_st((lo + hi) // 2)
-        time.sleep(0.7)
+        time.sleep(0.45)
         opts = json.loads(probe())
         if not opts:
             continue
@@ -113,22 +125,22 @@ def _scroll_salary_to(target_k):
 def _set_salary(mn, mx, months=12):
     """设置薪资：最低/最高/月数"""
     _open_select('职位薪资', 0)
-    time.sleep(1.2)
+    time.sleep(0.8)
     _scroll_salary_to(mn)
     _pick_option(f'{mn}k')
-    time.sleep(1)
+    time.sleep(0.7)
     _open_select('职位薪资', 1)
-    time.sleep(1.2)
+    time.sleep(0.8)
     _scroll_salary_to(mx)
     _pick_option(f'{mx}k')
-    time.sleep(0.8)
+    time.sleep(0.6)
     js("document.dispatchEvent(new KeyboardEvent('keydown', {key:'Escape', bubbles:true}))")
 
 def _pick_standard(label, value, idx=0, exact=True):
     _open_select(label, idx)
-    time.sleep(1.5)
+    time.sleep(1.0)
     r = _pick_option(value)
-    time.sleep(0.6)
+    time.sleep(0.5)
     js("document.dispatchEvent(new KeyboardEvent('keydown', {key:'Escape', bubbles:true}))")
     return r
 
@@ -220,14 +232,16 @@ def publish_job(company, display, job_name, category, city, district, salary_min
     time.sleep(1.8)
     js(f"""
     (()=>{{
+      // 旧结构：EM 精确匹配
       const em = Array.from(document.querySelectorAll('.jobs-wrap *')).find(e=>e.tagName==='EM' && (e.innerText||'').trim()==='{category}');
-      if(!em) return 'no category option';
-      const tag = em.closest('.ant-tag') || em.parentElement;
-      tag.click();
-      return 'category selected';
+      if(em){{ const tag = em.closest('.ant-tag') || em.parentElement; tag.click(); return 'category selected (em)'; }}
+      // 新结构（08-16 验证）：联想 li，文本可能被 <span>高亮切分（如"数据科学"+家），用 li 整体文本前缀匹配
+      const li = Array.from(document.querySelectorAll('.jobs-wrap .suggest-list li')).find(l=>(l.innerText||'').trim().startsWith('{category}'));
+      if(li){{ ['pointerdown','mousedown','mouseup','click'].forEach(ev=>li.dispatchEvent(new MouseEvent(ev,{{bubbles:true,cancelable:true}}))); return 'category selected (li)'; }}
+      return 'no category option';
     }})()
     """)
-    time.sleep(1)
+    time.sleep(0.8)
     logs.append("[3] 职位类别已选")
 
     # 4) 工作城市 + 区
@@ -258,12 +272,23 @@ def publish_job(company, display, job_name, category, city, district, salary_min
     (()=>{{
       const modal = Array.from(document.querySelectorAll('.ant-modal-content')).pop();
       if(!modal) return 'no district modal';
+      // 先点省份（左侧 ant-menu，08-16 验证：先选省右侧才会出现区列表）
+      const prov = Array.from(modal.querySelectorAll('span, div, li, a')).find(e=>e.children.length===0 && (e.innerText||'').trim()==='{city}');
+      if(prov) prov.click();
+      return 'province picked';
+    }})()
+    """)
+    time.sleep(1.2)
+    js(f"""
+    (()=>{{
+      const modal = Array.from(document.querySelectorAll('.ant-modal-content')).pop();
+      if(!modal) return 'no district modal';
       const d = Array.from(modal.querySelectorAll('span, div, li, a')).find(e=>e.children.length===0 && (e.innerText||'').trim()==='{district}');
       if(d) d.click();
       return 'district picked';
     }})()
     """)
-    time.sleep(1.5)
+    time.sleep(1.2)
     logs.append(f"[4] 城市 {city}·{district}")
 
     # 5) 薪资
@@ -294,15 +319,31 @@ def publish_job(company, display, job_name, category, city, district, salary_min
     logs.append("[8] 职位描述已填")
 
     # 9) 勾选同意 + 发布（循环处理违禁词弹窗）
-    js("""
+    # 勾选后必须校验真实选中（08-17 实测：一次 click 未勾上，顶部黄条"请确认已阅读职位发布规则"）
+    agree = js("""
     (()=>{
-      const labels = Array.from(document.querySelectorAll('label, .ant-checkbox-wrapper, span'));
-      const hit = labels.find(e=>/发布规则|已阅读|同意/.test(e.innerText||'') && e.innerText.length<80);
-      if(hit){ const cb = hit.querySelector('.ant-checkbox-input') || hit.closest('label')?.querySelector('.ant-checkbox-input'); if(cb) cb.click(); else hit.click(); }
-      return 'agree checked';
+      function clickCheck(){
+        const labels = Array.from(document.querySelectorAll('label, .ant-checkbox-wrapper, span'));
+        const hit = labels.find(e=>/发布规则|已阅读|同意/.test(e.innerText||'') && e.innerText.length<80);
+        if(!hit) return null;
+        const cb = hit.querySelector('.ant-checkbox-input') || hit.closest('label')?.querySelector('.ant-checkbox-input');
+        if(cb){ cb.click(); return 'cb'; }
+        hit.click(); return 'label';
+      }
+      const inputs = Array.from(document.querySelectorAll('.ant-checkbox-input'));
+      if(inputs.some(i=>i.checked)) return 'already checked';
+      for(let k=0;k<3;k++){
+        const how = clickCheck();
+        const checked = Array.from(document.querySelectorAll('.ant-checkbox-input')).some(i=>i.checked);
+        if(checked) return 'checked after try' + (k+1) + ' (' + how + ')';
+      }
+      const cbs = Array.from(document.querySelectorAll('.ant-checkbox-input'));
+      if(cbs.length){ cbs[cbs.length-1].click(); return 'fallback last checkbox'; }
+      return 'no checkbox found';
     })()
     """)
     time.sleep(0.8)
+    logs.append(f"[9] 勾选发布规则: {agree}")
     for attempt in range(5):
         _publish_click()
         time.sleep(1.5)

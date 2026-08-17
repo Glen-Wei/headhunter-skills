@@ -91,10 +91,11 @@ JD 素材可能包含客户敏感信息（汇报对象、薪资预算、内部�
   1. 新增代招企业：点「+新增代招企业」→ 填企业全名 → 联想选中 → 确认
   2. 职位名称：`input.search-component-input`（**注意**：职位类别也是同类 input，勿填错位）
   3. 职位类别：自定义 jobs-wrap 联想（非标准下拉），输入关键词后点 `.ant-tag-checkable` 选项
-  4. 工作城市：联想城市后仍会弹**区级面板**，需再选区 → 最终显示「城市·区」
+  4. 工作城市：联想城市后仍会弹**区级面板**，需先点左侧省份、再点右侧区 → 最终显示「城市·区」
   5. 职位薪资：三下拉【最低月薪】【最高月薪】【月数】，选项 1k-500k 虚拟滚动（`rc-virtual-list-holder.scrollTop` 定位）
   6. 职位描述：`#detailDuty` textarea（≥60 字），填脱敏后 JD 正文
-  7. 发布前必须勾选「已阅读发布规则」checkbox，否则报"请确认已阅读发布规则"
+  7. 发布前必须勾选「已阅读发布规则」checkbox（勾选后校验 `input.checked`，未勾中则循环重试，否则报"请确认已阅读发布规则"）
+- **表单选项分隔符**：工作年限等选项用「~」（如 `5~10年`），传值 `5-10年` 时脚本会自动生成变体重试（`_pick_option` 已内置 -/~ 双向变体）
 - **薪资必须使用者确认（业务约定）**：薪资数值是使用者的业务决策，即使 JD 写「面议」，发布前也**必须确认对外填多少**，确认后再填表发布。`publish_job.py` 未提供 salary 参数时应停止并提示询问，不得自行定数值。
 - **广告法违禁词**：描述含"顶尖/顶级/最好/第一"等会被平台拦截（弹窗"不符合《广告法》"）→ 点「立即修改」替换为"资深/一流"等合规词再发布
 - **发布后状态**：平台审核中 → 管理员审核 → 正式发布。汇报时告知后续需管理员审核
@@ -105,11 +106,12 @@ JD 素材可能包含客户敏感信息（汇报对象、薪资预算、内部�
 - **套路**（招聘笔记）：标题 16-22 字（岗位+亮点，禁用夸张词）；封面 1-2 行大字；正文 Slogan→机会→职责→要求→回报→CTA；标签 5-10 个；合规不写具体薪资
 - **封面制作**：HTML 设计（简约高级风）→ browser-harness 后台标签打开 file:// → `Emulation.setDeviceMetricsOverride(1080x1440, scale 2)` → 截图 PNG
 - **发布流程**（图文模式）：
-  1. 上传封面：CDP `DOM.setFileInputFiles` 到 `input[type=file]`
+  1. 上传封面：CDP `DOM.setFileInputFiles` 到 `input[type=file]`（先 `DOM.getDocument` → `DOM.querySelector` 拿 nodeId → `DOM.describeNode` 拿 backendNodeId → 再 setFileInputFiles，缺 backendNodeId 报 -32000）
   2. 标题：placeholder「填写标题」的 input（**≤20 字**，超限可能异常）
   3. 正文：`.tiptap.ProseMirror` contenteditable，`document.execCommand('insertText')` 填入（≤1000 字）
-  4. 发布：**发布按钮是 `<xhs-publish-btn>` 自定义 Web Component**（内部 shadow 渲染，普通 DOM 查询找不到其文字）；点击方法：获取组件 getBoundingClientRect，用 CDP `Input.dispatchMouseEvent` 点击组件范围**右侧 60~75%**、垂直中部
+  4. 发布：**发布按钮是 `<xhs-publish-btn>` 自定义 Web Component**（内部 shadow 渲染，普通 DOM 查询找不到其文字）；点击方法：获取组件 getBoundingClientRect，用 CDP `Input.dispatchMouseEvent` 点击组件范围**右侧 60~65%**、垂直中部（`is-publish="true"` 且 `submit-disabled="false"` 表示可发布）
   5. 成功标志：URL 跳 `/publish/success`；笔记管理显示「审核中」
+  6. **话题**：点「话题」按钮弹出的 el-overlay 弹窗点选容易把弹窗点关闭、选择不生效 → **不走弹窗**，正文末尾直接 `document.execCommand('insertText')` 插入 `#招聘 #AI ...` 空格分隔标签串，平台自动识别为话题，更稳更快
 
 ## 图片处理规则
 
