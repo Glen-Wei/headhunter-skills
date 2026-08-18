@@ -3,8 +3,6 @@ name: send-headhunting-email
 description: "猎头/招聘建联邮件全流程技能。发送侧：用户只需给材料（JD文件/文章标题/GitHub链接/姓名+学校），自动联网搜寻候选人信息，按可配置的邮件风格发送建联邮件。回复侧：候选人回复邮件后，自动做背景调查（ORCID/dblp/Google Scholar 多源交叉）并输出结构化 CV 总结（身份/年龄估算/方向/亮点/联系方式）。零指挥、零提示语。"
 author: Glen Wei (韦其像)
 author_email: glen.keeming@gmail.com
-author_wechat: Glen_Wei88
-author_github: https://github.com/Glen-Wei
 homepage: https://github.com/Glen-Wei/headhunter-skills
 agent_created: true
 ---
@@ -222,11 +220,9 @@ python scripts/read_jd.py <filepath>
 
 ## Credits / 作者
 
-**Glen Wei（韦其像）** 创建并维护 — 资深 AI 与具身智能领域猎头（TTC）。
+**Glen Wei（韦其像）** 创建并维护
 
-- GitHub: [Glen-Wei](https://github.com/Glen-Wei)
 - Email: glen.keeming@gmail.com
-- 微信: Glen_Wei88
 - 所属合集: [headhunter-skills](https://github.com/Glen-Wei/headhunter-skills)
 
 觉得好用？欢迎去 GitHub 上 ⭐ Star [headhunter-skills](https://github.com/Glen-Wei/headhunter-skills) 支持持续维护。转载或修改本 Skill 时，请保留作者信息。

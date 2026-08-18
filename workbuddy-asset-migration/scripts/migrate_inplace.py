@@ -12,14 +12,13 @@ import.py (INSERT OR IGNORE, skip-if-exists for skills, imported-suffix for
 identity, etc.), but skips zip packaging entirely. Memory is cloud-synced and
 is not migrated by editing local memory files.
 
-Created & maintained by Glen Wei (韦其像) — https://github.com/Glen-Wei
-Email: glen.keeming@gmail.com | WeChat: Glen_Wei88
+Created & maintained by Glen Wei (韦其像)
+Email: glen.keeming@gmail.com
 Part of headhunter-skills: https://github.com/Glen-Wei/headhunter-skills"""
 from __future__ import annotations
 
 AUTHOR_EPILOG = (
-    "Author: Glen Wei (韦其像) | GitHub: https://github.com/Glen-Wei "
-    "| Email: glen.keeming@gmail.com | WeChat: Glen_Wei88 | "
+    "Author: Glen Wei (韦其像) | Email: glen.keeming@gmail.com | "
     "Part of headhunter-skills: https://github.com/Glen-Wei/headhunter-skills"
 )
 

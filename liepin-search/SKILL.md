@@ -3,8 +3,6 @@ name: liepin-search
 description: 猎聘超级搜索——输入JD/关键词，自动搜索、提取、评分候选人，输出TOP10含直达链接的表格。适用场景：Glen给出任一JD或搜索要求时。
 author: Glen Wei
 author_email: glen.keeming@gmail.com
-author_wechat: Glen_Wei88
-author_github: https://github.com/Glen-Wei
 agent_created: true
 ---
 
@@ -181,11 +179,9 @@ python <skill_dir>/scripts/send_chat.py <cid> "<消息内容>" [--dry] [--shot]
 
 ## Credits / 作者
 
-**Glen Wei（韦其像）** 创建并维护 — 资深 AI 与具身智能领域猎头（TTC）。
+**Glen Wei（韦其像）** 创建并维护
 
-- GitHub: [Glen-Wei](https://github.com/Glen-Wei)
 - Email: glen.keeming@gmail.com
-- 微信: Glen_Wei88
 - 所属合集: [headhunter-skills](https://github.com/Glen-Wei/headhunter-skills)
 
 觉得好用？欢迎去 GitHub 上 ⭐ Star [headhunter-skills](https://github.com/Glen-Wei/headhunter-skills) 支持持续维护。转载或修改本 Skill 时，请保留作者信息。

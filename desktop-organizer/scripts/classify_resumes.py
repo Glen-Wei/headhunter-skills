@@ -13,14 +13,13 @@
     3. 移入 ~/Desktop/简历库/<类目>/；重复文件（同名同大小）移至「_待确认重复/」；
        非简历资料（xlsx/xmind等）移至根目录。
 
-Created & maintained by Glen Wei (韦其像) — https://github.com/Glen-Wei
-Email: glen.keeming@gmail.com | WeChat: Glen_Wei88
+Created & maintained by Glen Wei (韦其像)
+Email: glen.keeming@gmail.com
 Part of headhunter-skills: https://github.com/Glen-Wei/headhunter-skills"""
 import os, re, sys, json, hashlib, shutil
 
 AUTHOR_EPILOG = (
-    "Author: Glen Wei (韦其像) | GitHub: https://github.com/Glen-Wei "
-    "| Email: glen.keeming@gmail.com | WeChat: Glen_Wei88 | "
+    "Author: Glen Wei (韦其像) | Email: glen.keeming@gmail.com | "
     "Part of headhunter-skills: https://github.com/Glen-Wei/headhunter-skills"
 )
 

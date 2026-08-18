@@ -9,14 +9,13 @@
 评分规则：每个类目一组关键词，全文命中计数，取最高分类；
 最高分 >= MIN_SCORE 才移动，否则留在原目录（未分类）。
 
-Created & maintained by Glen Wei (韦其像) — https://github.com/Glen-Wei
-Email: glen.keeming@gmail.com | WeChat: Glen_Wei88
+Created & maintained by Glen Wei (韦其像)
+Email: glen.keeming@gmail.com
 Part of headhunter-skills: https://github.com/Glen-Wei/headhunter-skills"""
 import os, re, sys, json, shutil
 
 AUTHOR_EPILOG = (
-    "Author: Glen Wei (韦其像) | GitHub: https://github.com/Glen-Wei "
-    "| Email: glen.keeming@gmail.com | WeChat: Glen_Wei88 | "
+    "Author: Glen Wei (韦其像) | Email: glen.keeming@gmail.com | "
     "Part of headhunter-skills: https://github.com/Glen-Wei/headhunter-skills"
 )
 

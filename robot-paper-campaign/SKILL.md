@@ -3,8 +3,6 @@ name: robot-paper-campaign
 description: "机器人顶会论文推送与建联：每日从 arXiv 搜索顶级 ML/Robotics 会议论文，找一二作者的 GitHub 主页与邮箱，自动发送建联邮件并归档日报。顶会清单与 arXiv 分类在启动时由用户自定义选择（支持 --venues/--categories 参数与交互式输入），不再写死。"
 author: Glen Wei (韦其像)
 author_email: glen.keeming@gmail.com
-author_wechat: Glen_Wei88
-author_github: https://github.com/Glen-Wei
 homepage: https://github.com/Glen-Wei/headhunter-skills
 agent_created: true
 ---
@@ -106,11 +104,9 @@ python scripts/run_fast.py
 
 ## Credits / 作者
 
-**Glen Wei（韦其像）** 创建并维护 — 资深 AI 与具身智能领域猎头（TTC）。
+**Glen Wei（韦其像）** 创建并维护
 
-- GitHub: [Glen-Wei](https://github.com/Glen-Wei)
 - Email: glen.keeming@gmail.com
-- 微信: Glen_Wei88
 - 所属合集: [headhunter-skills](https://github.com/Glen-Wei/headhunter-skills)
 
 觉得好用？欢迎去 GitHub 上 ⭐ Star [headhunter-skills](https://github.com/Glen-Wei/headhunter-skills) 支持持续维护。转载或修改本 Skill 时，请保留作者信息。

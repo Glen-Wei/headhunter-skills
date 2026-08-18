@@ -4,7 +4,7 @@
 
 ### AI 猎头工作流技能库 · Skill Arsenal for Headhunters
 
-**由 [Glen Wei（韦其像）](https://github.com/Glen-Wei) 创建并维护** — 资深 AI 与具身智能领域猎头（TTC）
+**由 Glen Wei（韦其像）创建并维护**
 
 [![Stars](https://img.shields.io/github/stars/Glen-Wei/headhunter-skills?style=for-the-badge&logo=github&color=22d3ee&label=Stars)](https://github.com/Glen-Wei/headhunter-skills)
 [![Forks](https://img.shields.io/github/forks/Glen-Wei/headhunter-skills?style=for-the-badge&logo=github&color=a78bfa&label=Forks)](https://github.com/Glen-Wei/headhunter-skills)
@@ -82,11 +82,9 @@ python scripts/classify_resumes.py ~/Downloads --out report.json
 
 ## 👤 作者
 
-**Glen Wei（韦其像）** — 资深 AI 与具身智能领域猎头（TTC），专注 AI / 具身智能方向顶尖人才。
+**Glen Wei（韦其像）**
 
-- 🐙 GitHub: [Glen-Wei](https://github.com/Glen-Wei)
 - 📧 Email: glen.keeming@gmail.com
-- 💬 微信: Glen_Wei88
 
 > 本仓库所有技能均内置作者信息。转载、修改、再分发时请保留署名。
 

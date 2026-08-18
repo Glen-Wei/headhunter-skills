@@ -3,13 +3,12 @@
 Fast arXiv search + classification only (no email finding/sending).
 Runs standalone, imports core modules from main.py.
 
-Created & maintained by Glen Wei (韦其像) — https://github.com/Glen-Wei
-Email: glen.keeming@gmail.com | WeChat: Glen_Wei88
+Created & maintained by Glen Wei (韦其像)
+Email: glen.keeming@gmail.com
 Part of headhunter-skills: https://github.com/Glen-Wei/headhunter-skills"""
 
 AUTHOR_EPILOG = (
-    "Author: Glen Wei (韦其像) | GitHub: https://github.com/Glen-Wei "
-    "| Email: glen.keeming@gmail.com | WeChat: Glen_Wei88 | "
+    "Author: Glen Wei (韦其像) | Email: glen.keeming@gmail.com | "
     "Part of headhunter-skills: https://github.com/Glen-Wei/headhunter-skills"
 )
 

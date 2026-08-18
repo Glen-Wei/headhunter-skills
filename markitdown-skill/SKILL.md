@@ -6,8 +6,6 @@ description_en: "Convert documents to Markdown (PDF, Word, PPT, images, audio, U
 version: 1.1.0
 author: Glen Wei (韦其像)
 author_email: glen.keeming@gmail.com
-author_wechat: Glen_Wei88
-author_github: https://github.com/Glen-Wei
 homepage: https://github.com/Glen-Wei/headhunter-skills
 allowed-tools: Read,Write,Bash,Glob
 metadata:
@@ -144,10 +142,8 @@ brew install tesseract
 
 ## Credits
 
-**Created & maintained by Glen Wei (韦其像)** — AI & Embodied Intelligence headhunter at TTC.
+**Created & maintained by Glen Wei (韦其像)**
 
-- GitHub: [Glen-Wei](https://github.com/Glen-Wei)
 - Email: glen.keeming@gmail.com
-- WeChat: Glen_Wei88
 
 Found this skill helpful? ⭐ Star [headhunter-skills](https://github.com/Glen-Wei/headhunter-skills) on GitHub to support ongoing maintenance. If you distribute or modify this skill, please keep the author information intact.

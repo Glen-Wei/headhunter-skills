@@ -14,14 +14,13 @@
       广告法违禁词自动替换重试→确认状态。
 基于验证过的 selector 与事件序列；页面改版时函数报错并 dump 当前状态。
 
-Created & maintained by Glen Wei (韦其像) — https://github.com/Glen-Wei
-Email: glen.keeming@gmail.com | WeChat: Glen_Wei88
+Created & maintained by Glen Wei (韦其像)
+Email: glen.keeming@gmail.com
 Part of headhunter-skills: https://github.com/Glen-Wei/headhunter-skills"""
 import time, json, re
 
 AUTHOR_EPILOG = (
-    "Author: Glen Wei (韦其像) | GitHub: https://github.com/Glen-Wei "
-    "| Email: glen.keeming@gmail.com | WeChat: Glen_Wei88 | "
+    "Author: Glen Wei (韦其像) | Email: glen.keeming@gmail.com | "
     "Part of headhunter-skills: https://github.com/Glen-Wei/headhunter-skills"
 )
 

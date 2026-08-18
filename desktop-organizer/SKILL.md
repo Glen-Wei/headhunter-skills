@@ -3,8 +3,6 @@ name: desktop-organizer
 description: 整理桌面散落文件（候选人简历 / 职位JD / 图片）并按既定规则归档。简历按文件名职位关键词归类，先判断方向 → 统一命名为「姓名-方向.pdf」→ 归入对应类目文件夹；JD 脱敏转 PDF 后可同步发布猎聘/小红书；图片分析内容后询问处理方式；全程不删除文件。
 author: Glen Wei (韦其像)
 author_email: glen.keeming@gmail.com
-author_wechat: Glen_Wei88
-author_github: https://github.com/Glen-Wei
 homepage: https://github.com/Glen-Wei/headhunter-skills
 agent_created: true
 ---
@@ -137,11 +135,9 @@ pypdf/pymupdf 提取为空 → 用 pymupdf 渲染页面为 PNG（`page.get_pixma
 
 ## Credits / 作者
 
-**Glen Wei（韦其像）** 创建并维护 — 资深 AI 与具身智能领域猎头（TTC）。
+**Glen Wei（韦其像）** 创建并维护
 
-- GitHub: [Glen-Wei](https://github.com/Glen-Wei)
 - Email: glen.keeming@gmail.com
-- 微信: Glen_Wei88
 - 所属合集: [headhunter-skills](https://github.com/Glen-Wei/headhunter-skills)
 
 觉得好用？欢迎去 GitHub 上 ⭐ Star [headhunter-skills](https://github.com/Glen-Wei/headhunter-skills) 支持持续维护。转载或修改本 Skill 时，请保留作者信息。

@@ -6,8 +6,6 @@ description_en: "Migrate WorkBuddy personal assets (skills, conversations, autom
 version: 0.8.4
 author: Glen Wei (韦其像)
 author_email: glen.keeming@gmail.com
-author_wechat: Glen_Wei88
-author_github: https://github.com/Glen-Wei
 homepage: https://github.com/Glen-Wei/headhunter-skills
 allowed-tools: Read,Write,Bash
 display_name: "WorkBuddy 资产迁移"
@@ -455,11 +453,9 @@ cp workbuddy.db "workbuddy.db.bak-$(date +%Y%m%d-%H%M%S)"
 
 ## Credits / 作者
 
-**Glen Wei（韦其像）** 创建并维护 — 资深 AI 与具身智能领域猎头（TTC）。
+**Glen Wei（韦其像）** 创建并维护
 
-- GitHub: [Glen-Wei](https://github.com/Glen-Wei)
 - Email: glen.keeming@gmail.com
-- 微信: Glen_Wei88
 - 所属合集: [headhunter-skills](https://github.com/Glen-Wei/headhunter-skills)
 
 觉得好用？欢迎去 GitHub 上 ⭐ Star [headhunter-skills](https://github.com/Glen-Wei/headhunter-skills) 支持持续维护。转载或修改本 Skill 时，请保留作者信息。
